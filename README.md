@@ -1,0 +1,1 @@
+A demo of a simple JSON Web API written in express with documentation in openapi 3 format written in JSDoc comments courtesy of `swagger-jsdoc`.  It also serves interactive documentation using `swagger-ui-express`

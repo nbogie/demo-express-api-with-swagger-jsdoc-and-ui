@@ -1,6 +1,6 @@
 //@ts-check
 const express = require("express");
-const allJokes = require("./jokesData.json");
+const allJokes = require("./data/jokesData.json");
 const lodash = require("lodash");
 const cors = require("cors");
 const { setupSwaggerJSDocAndUI } = require("./swaggerSetup");

@@ -14,6 +14,8 @@ app.use(cors());
 
 let nextJokeId = 10000000;
 setupSwaggerJSDocAndUI(app, port);
+//See https://spec.openapis.org/oas/latest.html
+
 //openapi tags are categories / groupings of end-points.
 /**
  * @openapi
@@ -97,10 +99,9 @@ app.get("/", (req, res) => {
  *               type: string
  *               example: "Wed Jul 10 2024 09:48:15 GMT+0000"
  */
-app.get("/time", handleGetTime);
-function handleGetTime(req, res) {
+app.get("/time", function handleGetTime(req, res) {
     res.send("" + new Date());
-}
+});
 
 /**
  * @openapi
@@ -118,8 +119,10 @@ function handleGetTime(req, res) {
  *               items:
  *                 $ref: '#/components/schemas/Joke'
  */
-app.get("/jokes", function (req, res) {
+app.get("/jokes", function handleGetAllJokes(req, res) {
+    //or use the CORS middleware
     //res.header('Access-Control-Allow-Origin', '*');
+
     res.json(allJokes);
 });
 
@@ -137,11 +140,9 @@ app.get("/jokes", function (req, res) {
  *             schema:
  *               $ref: '#/components/schemas/Joke'
  */
-app.get("/jokes/first", handleRequestForFirstJoke);
-function handleRequestForFirstJoke(req, res) {
+app.get("/jokes/first", function handleGetFirstJoke(_req, res) {
     res.json([allJokes[0]]);
-}
-
+});
 /**
  * @openapi
  * /jokes/{id}:
@@ -169,7 +170,7 @@ function handleRequestForFirstJoke(req, res) {
  *       404:
  *         description: Joke not found for the provided ID
  */
-app.delete("/jokes/:id", (req, res) => {
+app.delete("/jokes/:id", function handleDeleteJoke(req, res) {
     const soughtId = req.params.id;
     if (soughtId === undefined) {
         res.status(404).send("missing id");
@@ -215,7 +216,7 @@ app.delete("/jokes/:id", (req, res) => {
  *         description: Bad request (e.g., missing tag parameter)
  */
 
-app.get("/jokes/tag", (req, res) => {
+app.get("/jokes/tag", function handleJokesTagSearch(req, res) {
     const searchTerm = req.query.searchTerm?.toString();
     if (!searchTerm) {
         res.status(400).send("missing searchTerm query parameter");
@@ -227,11 +228,6 @@ app.get("/jokes/tag", (req, res) => {
     );
     res.json(foundJokes);
 });
-
-function handleRequestForRandomJoke(req, res) {
-    const chosenJoke = lodash.sample(allJokes);
-    res.json([chosenJoke]);
-}
 
 /**
  * @openapi
@@ -247,7 +243,10 @@ function handleRequestForRandomJoke(req, res) {
  *             schema:
  *               $ref: '#/components/schemas/Joke'
  */
-app.get("/jokes/random", handleRequestForRandomJoke);
+app.get("/jokes/random", function handleRequestForRandomJoke(req, res) {
+    const chosenJoke = lodash.sample(allJokes);
+    res.json([chosenJoke]);
+});
 
 //Configure express to be able to receive a POST request with a new joke
 

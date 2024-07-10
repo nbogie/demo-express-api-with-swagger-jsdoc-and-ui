@@ -1,4 +1,10 @@
-A demo of a simple JSON Web API written in express with documentation in openapi 3 format written in JSDoc comments courtesy of `swagger-jsdoc`. It also serves interactive documentation using `swagger-ui-express`
+# Express API with Swagger docs and swagger-ui
+
+## What's this?
+
+A demo of a simple JSON Web API written in express with documentation in openapi 3 format written in JSDoc comments (courtesy of `swagger-jsdoc`). It also serves interactive documentation using `swagger-ui-express` on the same port, at `/api-docs`.
+
+The compiled swagger json file is served at `/api-docs/api.json`
 
 ## how to use
 

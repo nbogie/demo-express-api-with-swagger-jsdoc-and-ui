@@ -9,8 +9,9 @@ function setupSwaggerJSDocAndUI(app, port) {
             openapi: "3.0.0",
             info: {
                 title: "Jokes API",
-                version: "1.0.3",
-                description: "Documentation of Jokes API",
+                version: "1.0.4",
+                description:
+                    "Documentation of Jokes API.  [Source on github](https://github.com/nbogie/demo-express-api-with-swagger-jsdoc-and-ui)",
                 servers: ["http://localhost:" + port],
             },
         },
@@ -26,7 +27,7 @@ function setupSwaggerJSDocAndUI(app, port) {
         swaggerUI.serveFiles(undefined, { swaggerUrl: pathToAPIDownload }),
         swaggerUI.setup(openapiSpec),
     );
-    //Have the UI provide a link to the spec document
+    //Note: How to have the UI provide a link to the spec document
     //https://github.com/scottie1984/swagger-ui-express?tab=readme-ov-file#link-to-swagger-document
 }
 

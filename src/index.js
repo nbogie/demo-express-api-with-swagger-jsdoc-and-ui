@@ -72,7 +72,7 @@ setupSwaggerJSDocAndUI(app, port);
  *           text/plain:
  *             schema:
  *               type: string
- *               example: This is a jokes API server.  Try /jokes or /jokes/random
+ *               example: This is a jokes API server.  Try /jokes or /jokes/random or /api-docs for documentation.
  */
 app.get("/", (req, res) => {
     res.send("This is a jokes API server.  Try /jokes or /jokes/random");

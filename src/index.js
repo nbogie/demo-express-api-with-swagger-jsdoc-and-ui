@@ -172,7 +172,7 @@ app.delete("/jokes/:id", (req, res) => {
         return;
     }
     const indexOfJokeToDelete = allJokes.findIndex(
-        (j) => j.id === parseInt(soughtId)
+        (j) => j.id === parseInt(soughtId),
     );
     if (indexOfJokeToDelete < 0) {
         res.status(404).send("joke not found");
@@ -219,7 +219,7 @@ app.get("/jokes/tag", (req, res) => {
     }
 
     const foundJokes = allJokes.filter(
-        (j) => j.setup.includes(searchTerm) || j.punchline.includes(searchTerm)
+        (j) => j.setup.includes(searchTerm) || j.punchline.includes(searchTerm),
     );
     res.json(foundJokes);
 });
@@ -253,7 +253,7 @@ function handleRequestForPOSTJoke(req, res) {
     //check it exists (not null / undefined)
     if (newJoke === undefined || newJoke === null) {
         res.status(400).send(
-            "where is your joke! it's not in the body, i think"
+            "where is your joke! it's not in the body, i think",
         );
         return;
     }

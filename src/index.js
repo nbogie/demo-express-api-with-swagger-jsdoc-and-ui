@@ -14,6 +14,7 @@ app.use(cors());
 
 let nextJokeId = 10000000;
 setupSwaggerJSDocAndUI(app, port);
+//openapi tags are categories / groupings of end-points.
 /**
  * @openapi
  * tags:
@@ -23,12 +24,12 @@ setupSwaggerJSDocAndUI(app, port);
  *    description: An assortment of other end-points for testing and exploration
  */
 
-//Configure the application (the API server)
 /**
  * @openapi
  * components:
  *   schemas:
  *     JokeCandidate:
+ *       description: Representation of a Joke submitted before it has been validated and assigned an ID.
  *       type: object
  *       required:
  *         - type
@@ -47,6 +48,7 @@ setupSwaggerJSDocAndUI(app, port);
  *     Joke:
  *       allOf:
  *        - $ref: "#/components/schemas/JokeCandidate"  # Inherit from JokeCandidate
+ *       description: Representation of a Joke after it has been validated and assigned an ID.
  *       properties:
  *         id:
  *           type: integer

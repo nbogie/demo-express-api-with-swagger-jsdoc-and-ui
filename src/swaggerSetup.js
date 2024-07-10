@@ -6,10 +6,10 @@ function setupSwaggerJSDocAndUI(app, port) {
     // Extended: https://swagger.io/specification/#infoObject
     const swaggerJSDocOptions = {
         definition: {
-            openapi: "3.0.0",
+            openapi: "3.1.0",
             info: {
                 title: "Jokes API",
-                version: "1.0.4",
+                version: "1.0.5",
                 description:
                     "Documentation of Jokes API.  [Source on github](https://github.com/nbogie/demo-express-api-with-swagger-jsdoc-and-ui)",
                 servers: ["http://localhost:" + port],

@@ -75,7 +75,7 @@ setupSwaggerJSDocAndUI(app, port);
  *               example: This is a jokes API server.  Try /jokes or /jokes/random
  */
 app.get("/", (req, res) => {
-  res.send("This is a jokes API server.  Try /jokes or /jokes/random");
+    res.send("This is a jokes API server.  Try /jokes or /jokes/random");
 });
 
 /**
@@ -95,7 +95,7 @@ app.get("/", (req, res) => {
  */
 app.get("/time", handleGetTime);
 function handleGetTime(req, res) {
-  res.send("" + new Date());
+    res.send("" + new Date());
 }
 
 /**
@@ -115,8 +115,8 @@ function handleGetTime(req, res) {
  *                 $ref: '#/components/schemas/Joke'
  */
 app.get("/jokes", function (req, res) {
-  //res.header('Access-Control-Allow-Origin', '*');
-  res.json(allJokes);
+    //res.header('Access-Control-Allow-Origin', '*');
+    res.json(allJokes);
 });
 
 /**
@@ -135,7 +135,7 @@ app.get("/jokes", function (req, res) {
  */
 app.get("/jokes/first", handleRequestForFirstJoke);
 function handleRequestForFirstJoke(req, res) {
-  res.json([allJokes[0]]);
+    res.json([allJokes[0]]);
 }
 
 /**
@@ -166,21 +166,21 @@ function handleRequestForFirstJoke(req, res) {
  *         description: Joke not found for the provided ID
  */
 app.delete("/jokes/:id", (req, res) => {
-  const soughtId = req.params.id;
-  if (soughtId === undefined) {
-    res.status(404).send("missing id");
-    return;
-  }
-  const indexOfJokeToDelete = allJokes.findIndex(
-    (j) => j.id === parseInt(soughtId)
-  );
-  if (indexOfJokeToDelete < 0) {
-    res.status(404).send("joke not found");
-    return;
-  }
-  const jokeToDelete = allJokes[indexOfJokeToDelete];
-  allJokes.splice(indexOfJokeToDelete, 1);
-  res.json(jokeToDelete);
+    const soughtId = req.params.id;
+    if (soughtId === undefined) {
+        res.status(404).send("missing id");
+        return;
+    }
+    const indexOfJokeToDelete = allJokes.findIndex(
+        (j) => j.id === parseInt(soughtId)
+    );
+    if (indexOfJokeToDelete < 0) {
+        res.status(404).send("joke not found");
+        return;
+    }
+    const jokeToDelete = allJokes[indexOfJokeToDelete];
+    allJokes.splice(indexOfJokeToDelete, 1);
+    res.json(jokeToDelete);
 });
 /**
  * @openapi
@@ -212,21 +212,21 @@ app.delete("/jokes/:id", (req, res) => {
  */
 
 app.get("/jokes/tag", (req, res) => {
-  const searchTerm = req.query.searchTerm?.toString();
-  if (!searchTerm) {
-    res.status(400).send("missing searchTerm query parameter");
-    return;
-  }
+    const searchTerm = req.query.searchTerm?.toString();
+    if (!searchTerm) {
+        res.status(400).send("missing searchTerm query parameter");
+        return;
+    }
 
-  const foundJokes = allJokes.filter(
-    (j) => j.setup.includes(searchTerm) || j.punchline.includes(searchTerm)
-  );
-  res.json(foundJokes);
+    const foundJokes = allJokes.filter(
+        (j) => j.setup.includes(searchTerm) || j.punchline.includes(searchTerm)
+    );
+    res.json(foundJokes);
 });
 
 function handleRequestForRandomJoke(req, res) {
-  const chosenJoke = lodash.sample(allJokes);
-  res.json([chosenJoke]);
+    const chosenJoke = lodash.sample(allJokes);
+    res.json([chosenJoke]);
 }
 
 /**
@@ -248,21 +248,23 @@ app.get("/jokes/random", handleRequestForRandomJoke);
 //Configure express to be able to receive a POST request with a new joke
 
 function handleRequestForPOSTJoke(req, res) {
-  //get body from request, store as newJoke
-  const newJoke = req.body;
-  //check it exists (not null / undefined)
-  if (newJoke === undefined || newJoke === null) {
-    res.status(400).send("where is your joke! it's not in the body, i think");
-    return;
-  }
+    //get body from request, store as newJoke
+    const newJoke = req.body;
+    //check it exists (not null / undefined)
+    if (newJoke === undefined || newJoke === null) {
+        res.status(400).send(
+            "where is your joke! it's not in the body, i think"
+        );
+        return;
+    }
 
-  //add an id to the joke
-  const id = nextJokeId++;
-  newJoke.id = id;
-  newJoke.timestamp = new Date() + "";
-  //put newJoke into the allJokes array
-  allJokes.push(newJoke);
-  res.status(201).json(newJoke);
+    //add an id to the joke
+    const id = nextJokeId++;
+    newJoke.id = id;
+    newJoke.timestamp = new Date() + "";
+    //put newJoke into the allJokes array
+    allJokes.push(newJoke);
+    res.status(201).json(newJoke);
 }
 
 /**
@@ -296,5 +298,5 @@ function handleRequestForPOSTJoke(req, res) {
 app.post("/jokes", handleRequestForPOSTJoke);
 
 app.listen(port, () => {
-  console.log(`3. Example app listening on port ${port} at ` + new Date());
+    console.log(`Jokes API listening on port ${port} at ` + new Date());
 });

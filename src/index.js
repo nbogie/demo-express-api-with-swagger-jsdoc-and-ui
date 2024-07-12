@@ -248,28 +248,6 @@ app.get("/jokes/random", function handleRequestForRandomJoke(req, res) {
     res.json([chosenJoke]);
 });
 
-//Configure express to be able to receive a POST request with a new joke
-
-function handleRequestForPOSTJoke(req, res) {
-    //get body from request, store as newJoke
-    const newJoke = req.body;
-    //check it exists (not null / undefined)
-    if (newJoke === undefined || newJoke === null) {
-        res.status(400).send(
-            "where is your joke! it's not in the body, i think",
-        );
-        return;
-    }
-
-    //add an id to the joke
-    const id = nextJokeId++;
-    newJoke.id = id;
-    newJoke.timestamp = new Date() + "";
-    //put newJoke into the allJokes array
-    allJokes.push(newJoke);
-    res.status(201).json(newJoke);
-}
-
 /**
  * @openapi
  * /jokes:
@@ -300,6 +278,29 @@ function handleRequestForPOSTJoke(req, res) {
  */
 app.post("/jokes", handleRequestForPOSTJoke);
 
+/**
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+function handleRequestForPOSTJoke(req, res) {
+    //get body from request, store as newJoke
+    const newJoke = req.body;
+    //check it exists (not null / undefined)
+    if (newJoke === undefined || newJoke === null) {
+        res.status(400).send(
+            "where is your joke! it's not in the body, i think",
+        );
+        return;
+    }
+
+    //add an id to the joke
+    const id = nextJokeId++;
+    newJoke.id = id;
+    newJoke.timestamp = new Date() + "";
+    //put newJoke into the allJokes array
+    allJokes.push(newJoke);
+    res.status(201).json(newJoke);
+}
 app.listen(port, () => {
     console.log(`Jokes API listening on port ${port} at ` + new Date());
 });

@@ -80,7 +80,7 @@ setupSwaggerJSDocAndUI(app, port);
  */
 app.get("/", (req, res) => {
     res.send(
-        "This is a jokes API server.  Try /jokes or /jokes/random or /api-docs for documentation.",
+        "Hello - this is a jokes API server.  Try /jokes or /jokes/random or /api-docs for documentation.",
     );
 });
 

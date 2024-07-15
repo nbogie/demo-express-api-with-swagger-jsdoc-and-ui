@@ -1,10 +1,11 @@
 //@ts-check
 const express = require("express");
-const allJokes = require("./data/jokesData.json");
+const originalJokesList = require("./data/jokesData.json");
 const lodash = require("lodash");
 const cors = require("cors");
 const { setupSwaggerJSDocAndUI } = require("./swaggerSetup");
 const app = express();
+let allJokes = [...originalJokesList];
 
 const port = process.env.NODE_ENV === "production" ? process.env.PORT : 4000;
 
@@ -301,6 +302,25 @@ function handleRequestForPOSTJoke(req, res) {
     allJokes.push(newJoke);
     res.status(201).json(newJoke);
 }
+
+/**
+ * @openapi
+ * /jokes/reset:
+ *   post:
+ *     tags: [Jokes]
+ *     summary: Reset list of jokes back to original populated list
+ *     responses:
+ *       200:
+ *         description: accepted.  reset completed.
+ */
+app.post("/jokes/reset", (req, res) => {
+    allJokes = [...originalJokesList];
+    res.json({
+        outcome: "success",
+        message: "jokes list has been reset",
+    });
+});
+
 app.listen(port, () => {
     console.log(`Jokes API listening on port ${port} at ` + new Date());
 });

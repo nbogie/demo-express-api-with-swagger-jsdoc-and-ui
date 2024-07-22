@@ -224,7 +224,7 @@ app.delete("/jokes", function handleDeleteAllJokes(req, res) {
  * @openapi
  * /jokes/search:
  *   get:
- *     summary: Get jokes by search
+ *     summary: Get jokes matching a searchTerm
  *     description: Returns an array of jokes that contain the specified search in either the setup or punchline.
  *     tags:
  *       - Jokes

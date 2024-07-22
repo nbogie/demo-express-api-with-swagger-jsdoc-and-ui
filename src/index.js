@@ -190,10 +190,10 @@ app.delete("/jokes/:id", function handleDeleteJoke(req, res) {
 });
 /**
  * @openapi
- * /jokes/tag:
+ * /jokes/search:
  *   get:
- *     summary: Get jokes by tag
- *     description: Returns an array of jokes that contain the specified tag in either the setup or punchline.
+ *     summary: Get jokes by search
+ *     description: Returns an array of jokes that contain the specified search in either the setup or punchline.
  *     tags:
  *       - Jokes
  *     parameters:
@@ -214,10 +214,10 @@ app.delete("/jokes/:id", function handleDeleteJoke(req, res) {
  *               items:
  *                 $ref: '#/components/schemas/Joke'
  *       400:
- *         description: Bad request (e.g., missing tag parameter)
+ *         description: Bad request (e.g., missing search parameter)
  */
 
-app.get("/jokes/tag", function handleJokesTagSearch(req, res) {
+app.get("/jokes/search", function handleJokesSearch(req, res) {
     const searchTerm = req.query.searchTerm?.toString();
     if (!searchTerm) {
         res.status(400).send("missing searchTerm query parameter");

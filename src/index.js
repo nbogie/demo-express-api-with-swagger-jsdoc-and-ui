@@ -160,52 +160,6 @@ app.get("/jokes/first", function handleGetFirstJoke(_req, res) {
 /**
  * @openapi
  * /jokes/{id}:
- *   get:
- *     tags: [Jokes]
- *     summary: Get one joke by id
- *     parameters:
- *     - in: path
- *       name: id   # Note the name is the same as in the path
- *       required: true
- *       schema:
- *         type: integer
- *         minimum: 1
- *       description: The joke ID
- *     responses:
- *       200:
- *         description: return the joke with the matching id
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Joke'
- *       404:
- *         description: joke not found
- */
-app.get("/jokes/:id", function handleGetJokeById(req, res) {
-    const soughtId = parseInt(req.params.id ?? "");
-
-    if (Number.isNaN(soughtId)) {
-        res.status(400).json({
-            outcome: "failure",
-            message: "missing id to search for.",
-        });
-        return;
-    }
-
-    const foundJoke = allJokes.find((j) => j.id === soughtId);
-    if (!foundJoke) {
-        res.status(404).json({
-            outcome: "failure",
-            message: "can't find joke with that id.",
-            soughtId,
-        });
-        return;
-    }
-    res.json(foundJoke);
-});
-/**
- * @openapi
- * /jokes/{id}:
  *   delete:
  *     summary: Delete a joke by ID
  *     description: Deletes a joke from the system based on the provided ID.
@@ -325,6 +279,53 @@ app.get("/jokes/search", function handleJokesSearch(req, res) {
 app.get("/jokes/random", function handleRequestForRandomJoke(req, res) {
     const chosenJoke = lodash.sample(allJokes);
     res.json([chosenJoke]);
+});
+
+/**
+ * @openapi
+ * /jokes/{id}:
+ *   get:
+ *     tags: [Jokes]
+ *     summary: Get one joke by id
+ *     parameters:
+ *     - in: path
+ *       name: id   # Note the name is the same as in the path
+ *       required: true
+ *       schema:
+ *         type: integer
+ *         minimum: 1
+ *       description: The joke ID
+ *     responses:
+ *       200:
+ *         description: return the joke with the matching id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Joke'
+ *       404:
+ *         description: joke not found
+ */
+app.get("/jokes/:id", function handleGetJokeById(req, res) {
+    const soughtId = parseInt(req.params.id ?? "");
+
+    if (Number.isNaN(soughtId)) {
+        res.status(400).json({
+            outcome: "failure",
+            message: "missing id to search for.",
+        });
+        return;
+    }
+
+    const foundJoke = allJokes.find((j) => j.id === soughtId);
+    if (!foundJoke) {
+        res.status(404).json({
+            outcome: "failure",
+            message: "can't find joke with that id.",
+            soughtId,
+        });
+        return;
+    }
+    res.json(foundJoke);
 });
 
 /**

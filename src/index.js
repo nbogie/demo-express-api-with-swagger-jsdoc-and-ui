@@ -209,6 +209,7 @@ app.get("/jokes/:id", function handleGetJokeById(req, res) {
  *         required: true
  *         schema:
  *           type: integer
+ *           minimum: 1
  *     responses:
  *       200:
  *         description: Joke deleted successfully.  Returns deleted joke.
@@ -231,13 +232,31 @@ app.delete("/jokes/:id", function handleDeleteJoke(req, res) {
         (j) => j.id === parseInt(soughtId),
     );
     if (indexOfJokeToDelete < 0) {
-        res.status(404).send("joke not found");
+        res.status(404).json({ outcome: "failure", message: "joke not found" });
         return;
     }
     const jokeToDelete = allJokes[indexOfJokeToDelete];
     allJokes.splice(indexOfJokeToDelete, 1);
     res.json(jokeToDelete);
 });
+
+/**
+ * @openapi
+ * /jokes:
+ *   delete:
+ *     summary: Delete all jokes
+ *     description: Deletes all jokes from the system.  Can reset with /jokes/reset
+ *     tags:
+ *       - Jokes
+ *     responses:
+ *       200:
+ *         description: Jokes deleted successfully.
+ */
+app.delete("/jokes", function handleDeleteAllJokes(req, res) {
+    allJokes.length = 0;
+    res.status(200).json({ outcome: "success", message: "all jokes deleted" });
+});
+
 /**
  * @openapi
  * /jokes/search:

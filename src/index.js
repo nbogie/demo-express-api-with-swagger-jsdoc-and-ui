@@ -143,9 +143,18 @@ app.get("/jokes", function handleGetAllJokes(req, res) {
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Joke'
+ *       404:
+ *         description: no jokes in db - first joke not found
  */
 app.get("/jokes/first", function handleGetFirstJoke(_req, res) {
-    res.json([allJokes[0]]);
+    if (allJokes.length > 0) {
+        res.json(allJokes[0]);
+        return;
+    }
+    res.status(404).json({
+        outcome: "failure",
+        message: "no jokes in database",
+    });
 });
 
 /**

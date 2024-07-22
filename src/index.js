@@ -3,6 +3,8 @@ const express = require("express");
 const originalJokesList = require("./data/jokesData.json");
 const lodash = require("lodash");
 const cors = require("cors");
+const morgan = require("morgan");
+
 const { setupSwaggerJSDocAndUI } = require("./swaggerSetup");
 const app = express();
 let allJokes = [...originalJokesList];
@@ -12,6 +14,7 @@ const port = process.env.NODE_ENV === "production" ? process.env.PORT : 4000;
 // be prepared to parse application/json if seen in body and substitute req.body as the parsed object
 app.use(express.json());
 app.use(cors());
+app.use(morgan("tiny"));
 
 let nextJokeId = 10000000;
 setupSwaggerJSDocAndUI(app, port);
@@ -140,10 +143,20 @@ app.get("/jokes", function handleGetAllJokes(req, res) {
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Joke'
+ *       404:
+ *         description: no jokes in db - first joke not found
  */
 app.get("/jokes/first", function handleGetFirstJoke(_req, res) {
-    res.json([allJokes[0]]);
+    if (allJokes.length > 0) {
+        res.json(allJokes[0]);
+        return;
+    }
+    res.status(404).json({
+        outcome: "failure",
+        message: "no jokes in database",
+    });
 });
+
 /**
  * @openapi
  * /jokes/{id}:
@@ -159,6 +172,7 @@ app.get("/jokes/first", function handleGetFirstJoke(_req, res) {
  *         required: true
  *         schema:
  *           type: integer
+ *           minimum: 1
  *     responses:
  *       200:
  *         description: Joke deleted successfully.  Returns deleted joke.
@@ -181,19 +195,37 @@ app.delete("/jokes/:id", function handleDeleteJoke(req, res) {
         (j) => j.id === parseInt(soughtId),
     );
     if (indexOfJokeToDelete < 0) {
-        res.status(404).send("joke not found");
+        res.status(404).json({ outcome: "failure", message: "joke not found" });
         return;
     }
     const jokeToDelete = allJokes[indexOfJokeToDelete];
     allJokes.splice(indexOfJokeToDelete, 1);
     res.json(jokeToDelete);
 });
+
 /**
  * @openapi
- * /jokes/tag:
+ * /jokes:
+ *   delete:
+ *     summary: Delete all jokes
+ *     description: Deletes all jokes from the system.  Can reset with /jokes/reset
+ *     tags:
+ *       - Jokes
+ *     responses:
+ *       200:
+ *         description: Jokes deleted successfully.
+ */
+app.delete("/jokes", function handleDeleteAllJokes(req, res) {
+    allJokes.length = 0;
+    res.status(200).json({ outcome: "success", message: "all jokes deleted" });
+});
+
+/**
+ * @openapi
+ * /jokes/search:
  *   get:
- *     summary: Get jokes by tag
- *     description: Returns an array of jokes that contain the specified tag in either the setup or punchline.
+ *     summary: Get jokes matching a searchTerm
+ *     description: Returns an array of jokes that contain the specified search in either the setup or punchline.
  *     tags:
  *       - Jokes
  *     parameters:
@@ -214,10 +246,10 @@ app.delete("/jokes/:id", function handleDeleteJoke(req, res) {
  *               items:
  *                 $ref: '#/components/schemas/Joke'
  *       400:
- *         description: Bad request (e.g., missing tag parameter)
+ *         description: Bad request (e.g., missing search parameter)
  */
 
-app.get("/jokes/tag", function handleJokesTagSearch(req, res) {
+app.get("/jokes/search", function handleJokesSearch(req, res) {
     const searchTerm = req.query.searchTerm?.toString();
     if (!searchTerm) {
         res.status(400).send("missing searchTerm query parameter");
@@ -247,6 +279,53 @@ app.get("/jokes/tag", function handleJokesTagSearch(req, res) {
 app.get("/jokes/random", function handleRequestForRandomJoke(req, res) {
     const chosenJoke = lodash.sample(allJokes);
     res.json([chosenJoke]);
+});
+
+/**
+ * @openapi
+ * /jokes/{id}:
+ *   get:
+ *     tags: [Jokes]
+ *     summary: Get one joke by id
+ *     parameters:
+ *     - in: path
+ *       name: id   # Note the name is the same as in the path
+ *       required: true
+ *       schema:
+ *         type: integer
+ *         minimum: 1
+ *       description: The joke ID
+ *     responses:
+ *       200:
+ *         description: return the joke with the matching id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Joke'
+ *       404:
+ *         description: joke not found
+ */
+app.get("/jokes/:id", function handleGetJokeById(req, res) {
+    const soughtId = parseInt(req.params.id ?? "");
+
+    if (Number.isNaN(soughtId)) {
+        res.status(400).json({
+            outcome: "failure",
+            message: "missing id to search for.",
+        });
+        return;
+    }
+
+    const foundJoke = allJokes.find((j) => j.id === soughtId);
+    if (!foundJoke) {
+        res.status(404).json({
+            outcome: "failure",
+            message: "can't find joke with that id.",
+            soughtId,
+        });
+        return;
+    }
+    res.json(foundJoke);
 });
 
 /**

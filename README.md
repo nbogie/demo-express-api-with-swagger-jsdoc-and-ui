@@ -6,6 +6,10 @@ A demo of a simple JSON Web API written in express with documentation in openapi
 
 The compiled swagger json file is served at `/api-docs/api.json`
 
+## branches
+There's a branch "uat" which really just exists to allow a separate simulated "environment" to be deployed by render.com.  Really, it is the same code but will have different in-memory data.
+
+
 ## how to use
 
 ```

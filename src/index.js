@@ -3,6 +3,8 @@ const express = require("express");
 const originalJokesList = require("./data/jokesData.json");
 const lodash = require("lodash");
 const cors = require("cors");
+const morgan = require("morgan");
+
 const { setupSwaggerJSDocAndUI } = require("./swaggerSetup");
 const app = express();
 let allJokes = [...originalJokesList];
@@ -12,6 +14,7 @@ const port = process.env.NODE_ENV === "production" ? process.env.PORT : 4000;
 // be prepared to parse application/json if seen in body and substitute req.body as the parsed object
 app.use(express.json());
 app.use(cors());
+app.use(morgan("tiny"));
 
 let nextJokeId = 10000000;
 setupSwaggerJSDocAndUI(app, port);
@@ -143,6 +146,53 @@ app.get("/jokes", function handleGetAllJokes(req, res) {
  */
 app.get("/jokes/first", function handleGetFirstJoke(_req, res) {
     res.json([allJokes[0]]);
+});
+
+/**
+ * @openapi
+ * /jokes/{id}:
+ *   get:
+ *     tags: [Jokes]
+ *     summary: Get one joke by id
+ *     parameters:
+ *     - in: path
+ *       name: id   # Note the name is the same as in the path
+ *       required: true
+ *       schema:
+ *         type: integer
+ *         minimum: 1
+ *       description: The joke ID
+ *     responses:
+ *       200:
+ *         description: return the joke with the matching id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Joke'
+ *       404:
+ *         description: joke not found
+ */
+app.get("/jokes/:id", function handleGetJokeById(req, res) {
+    const soughtId = parseInt(req.params.id ?? "");
+
+    if (Number.isNaN(soughtId)) {
+        res.status(400).json({
+            outcome: "failure",
+            message: "missing id to search for.",
+        });
+        return;
+    }
+
+    const foundJoke = allJokes.find((j) => j.id === soughtId);
+    if (!foundJoke) {
+        res.status(404).json({
+            outcome: "failure",
+            message: "can't find joke with that id.",
+            soughtId,
+        });
+        return;
+    }
+    res.json(foundJoke);
 });
 /**
  * @openapi
